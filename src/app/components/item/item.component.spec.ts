@@ -4,6 +4,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ItemComponent } from './item.component';
 import { TestUtils } from 'src/testing/test-utils';
 import { TimeAgoPipe } from '../time-ago.pipe';
+import { By } from '@angular/platform-browser';
 
 describe('ItemComponent', () => {
   let component: ItemComponent;
@@ -29,5 +30,8 @@ describe('ItemComponent', () => {
     }
     fixture.detectChanges()
     expect(component).toBeTruthy();
+
+    const debugElement = fixture.debugElement.query(By.css('.title'))
+    expect(debugElement.nativeElement.textContent).toContain('Test item 1')
   });
 });
