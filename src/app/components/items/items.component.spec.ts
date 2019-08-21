@@ -2,24 +2,22 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ItemsComponent } from './items.component';
+import { TestUtils } from 'src/testing/test-utils';
+import { ItemComponent } from '../item/item.component';
+import { TimeAgoPipe } from '../time-ago.pipe';
 
 describe('ItemsComponent', () => {
   let component: ItemsComponent;
   let fixture: ComponentFixture<ItemsComponent>;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ItemsComponent ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    })
-    .compileComponents();
+    TestUtils.beforeEachCompiler([ItemsComponent,
+      ItemComponent, TimeAgoPipe])
+      .then(compiled => {
+        fixture = compiled.fixture;
+        component = compiled.instance;
+      });
   }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ItemsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
