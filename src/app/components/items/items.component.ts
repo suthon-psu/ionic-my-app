@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Items } from 'src/app/model/items';
+import { Item } from 'src/app/model/item';
 
 @Component({
   selector: 'app-items',
@@ -8,7 +9,7 @@ import { Items } from 'src/app/model/items';
 })
 export class ItemsComponent implements OnInit {
 
-  @Input() items: Items
+  @Input() items: Item[]
   
   constructor() { }
 
