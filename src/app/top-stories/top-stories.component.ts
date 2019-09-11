@@ -21,7 +21,6 @@ export class TopStoriesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.itemService.get().
       subscribe(items => {
-        console.log(items)
         if (items.refresh) {
           this.items = items;
           this.notifyRefreshComplete();
