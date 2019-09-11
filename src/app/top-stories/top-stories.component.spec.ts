@@ -5,8 +5,8 @@ import { TestUtils } from 'src/testing/test-utils';
 import { ItemsComponent } from '../components/items/items.component';
 import { ItemComponent } from '../components/item/item.component';
 import { TimeAgoPipe } from '../components/time-ago.pipe';
-import { ItemService } from '../services/item.service';
-import { ItemServiceMock } from 'src/testing/item.service.mock';
+import { ItemService } from '../services/item/item.service';
+import { ItemServiceMock } from 'src/app/services/item/item.service.mock';
 
 let fixture: ComponentFixture<TopStoriesComponent> = null;
 let component: any = null;
