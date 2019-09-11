@@ -42,10 +42,16 @@ export class ItemService {
       filter(([ids, query]) => query.refresh),
       map(([ids, query]) => ids)
     );
-    const selector = ({ offset, limit }, ids) =>
+    const selector = ({ refresh = false, offset, limit }, ids) =>
       combineLatest(...(ids.slice(offset, offset + limit)
         .map(id => this.db.object<Item>('/v0/item/' + id).
-          valueChanges()))
+          valueChanges()))        
+      ).pipe(
+        map(items => ({
+          refresh,
+          total: this.totalItem,
+          results: items
+        }))
       ) as Observable<Items>;
     return merge(
       combineLatest(this.queries, itemIds).pipe(

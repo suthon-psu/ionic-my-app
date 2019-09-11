@@ -1,3 +1,7 @@
 import { Item } from './item';
 
-export type Items  = Item[];
+export interface Items {
+  refresh?: boolean
+  results: Item[]
+  total: number
+};

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Items } from '../models/items';
 import { Subscription } from 'rxjs';
 import { ItemService } from '../services/item/item.service';
+import { concat } from 'lodash';
 
 @Component({
   selector: 'app-top-stories',
@@ -13,13 +14,26 @@ export class TopStoriesComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   private offset = 0;
   private limit = 10;
+  private infiniteScrollComponent: any;
+  private refresherComponent: any;
 
   constructor(private itemService: ItemService) { }
   ngOnInit() {
     this.subscription = this.itemService.get().
-      subscribe(items => this.items = items);
+      subscribe(items => {
+        console.log(items)
+        if (items.refresh) {
+          this.items = items;
+          this.notifyRefreshComplete();
+        } else {
+          this.items = {
+            ...this.items,
+            results: concat(this.items.results, items.results),
+          };
+          this.notifyScrollComplete();
+        }
+      });
     this.doLoad(true)
-    this.offset += this.limit;
   }
 
   ngOnDestroy() {
@@ -28,23 +42,17 @@ export class TopStoriesComponent implements OnInit, OnDestroy {
     }
   }
 
-  hasPrevious(): boolean {
-    return this.offset > this.limit;
-  }
-
-  previous(): void {
-    if (!this.hasPrevious()) {
-
-      return;
+  load(event) {
+    this.infiniteScrollComponent = event.target;    
+    if (this.hasNext()) {
+      this.next();
     }
-    this.offset -= this.limit;    
-    this.doLoad(false);
   }
 
   hasNext(): boolean {
     return this.items != null && (this.offset + this.limit) <
-      this.itemService.totalItem;
-  }
+      this.items.total;
+  } 
 
   next() {
     if (!this.hasNext()) {
@@ -58,19 +66,35 @@ export class TopStoriesComponent implements OnInit, OnDestroy {
     return this.items != null;
   }
 
-  refresh() {
-    if (!this.canRefresh()) {
-      return;
+  refresh(event) {
+    this.refresherComponent = event.target;
+    if (this.canRefresh()) {
+      this.doRefresh();
     }
+  }
+
+  doRefresh() {
     this.offset = 0;
     this.doLoad(true);
   }
 
-  doLoad(refresh: boolean) {    
+  private doLoad(refresh: boolean) {
     this.itemService.load({
       offset: this.offset,
       limit: this.limit,
       refresh,
-    });    
+    });
+  }
+
+  private notifyScrollComplete(): void {
+    if (this.infiniteScrollComponent) {
+      this.infiniteScrollComponent.complete();
+    }
+  }
+
+  private notifyRefreshComplete(): void {
+    if (this.refresherComponent) {
+      this.refresherComponent.complete();
+    }
   }
 }
